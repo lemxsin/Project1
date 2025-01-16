@@ -68,6 +68,7 @@
             textBox6 = new TextBox();
             label19 = new Label();
             textBox7 = new TextBox();
+            textBox8 = new TextBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown11).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown10).BeginInit();
@@ -108,7 +109,7 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Location = new Point(12, 116);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(654, 405);
+            groupBox1.Size = new Size(654, 401);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Ввод начальных значений";
@@ -129,6 +130,7 @@
             numericUpDown10.DecimalPlaces = 5;
             numericUpDown10.Increment = new decimal(new int[] { 1, 0, 0, 327680 });
             numericUpDown10.Location = new Point(498, 323);
+            numericUpDown10.Maximum = new decimal(new int[] { 100000000, 0, 0, 0 });
             numericUpDown10.Minimum = new decimal(new int[] { 1, 0, 0, 327680 });
             numericUpDown10.Name = "numericUpDown10";
             numericUpDown10.Size = new Size(150, 27);
@@ -140,6 +142,7 @@
             numericUpDown9.DecimalPlaces = 5;
             numericUpDown9.Increment = new decimal(new int[] { 1, 0, 0, 327680 });
             numericUpDown9.Location = new Point(498, 290);
+            numericUpDown9.Maximum = new decimal(new int[] { 100000000, 0, 0, 0 });
             numericUpDown9.Minimum = new decimal(new int[] { 1, 0, 0, 327680 });
             numericUpDown9.Name = "numericUpDown9";
             numericUpDown9.Size = new Size(150, 27);
@@ -228,18 +231,18 @@
             label12.AutoSize = true;
             label12.Location = new Point(6, 330);
             label12.Name = "label12";
-            label12.Size = new Size(411, 20);
+            label12.Size = new Size(437, 20);
             label12.TabIndex = 19;
-            label12.Text = "Давление на свободной поверхности питающей емкости";
+            label12.Text = "Давление на свободной поверхности питающей емкости, Па";
             // 
             // label11
             // 
             label11.AutoSize = true;
             label11.Location = new Point(6, 297);
             label11.Name = "label11";
-            label11.Size = new Size(227, 20);
+            label11.Size = new Size(264, 20);
             label11.TabIndex = 18;
-            label11.Text = "Давление в приемной емкости";
+            label11.Text = "Давление в конечной точки сети, Па";
             // 
             // label10
             // 
@@ -301,9 +304,9 @@
             label3.AutoSize = true;
             label3.Location = new Point(6, 66);
             label3.Name = "label3";
-            label3.Size = new Size(70, 20);
+            label3.Size = new Size(88, 20);
             label3.TabIndex = 2;
-            label3.Text = "Диаметр";
+            label3.Text = "Диаметр, м";
             // 
             // label1
             // 
@@ -318,7 +321,7 @@
             // 
             fluidTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             fluidTypeComboBox.FormattingEnabled = true;
-            fluidTypeComboBox.Items.AddRange(new object[] { "Вода", "Углеводороды", "Спирты" });
+            fluidTypeComboBox.Items.AddRange(new object[] { "Вода", "Глицерин (50%)", "Метиловый спирт", "Этиловый спирт", "Ацетон", "Толуол", "Нефть" });
             fluidTypeComboBox.Location = new Point(510, 54);
             fluidTypeComboBox.Name = "fluidTypeComboBox";
             fluidTypeComboBox.Size = new Size(150, 28);
@@ -339,7 +342,7 @@
             button1.Name = "button1";
             button1.Size = new Size(94, 29);
             button1.TabIndex = 5;
-            button1.Text = "Расчитать";
+            button1.Text = "Рассчитать";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
@@ -357,18 +360,18 @@
             label14.AutoSize = true;
             label14.Location = new Point(692, 192);
             label14.Name = "label14";
-            label14.Size = new Size(130, 20);
+            label14.Size = new Size(138, 20);
             label14.TabIndex = 7;
-            label14.Text = "Число Рейнолдса";
+            label14.Text = "Число Рейнольдса";
             // 
             // label15
             // 
             label15.AutoSize = true;
             label15.Location = new Point(692, 229);
             label15.Name = "label15";
-            label15.Size = new Size(63, 20);
+            label15.Size = new Size(280, 20);
             label15.TabIndex = 8;
-            label15.Text = "Лямбда";
+            label15.Text = "Коэффициент гидравлического трения";
             // 
             // label16
             // 
@@ -444,9 +447,9 @@
             label19.AutoSize = true;
             label19.Location = new Point(692, 262);
             label19.Name = "label19";
-            label19.Size = new Size(79, 20);
+            label19.Size = new Size(56, 20);
             label19.TabIndex = 18;
-            label19.Text = "Параметр";
+            label19.Text = "Режим";
             // 
             // textBox7
             // 
@@ -455,11 +458,20 @@
             textBox7.Size = new Size(178, 27);
             textBox7.TabIndex = 19;
             // 
+            // textBox8
+            // 
+            textBox8.Location = new Point(1078, 413);
+            textBox8.Name = "textBox8";
+            textBox8.Size = new Size(178, 27);
+            textBox8.TabIndex = 20;
+            textBox8.Visible = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1296, 530);
+            ClientSize = new Size(1296, 525);
+            Controls.Add(textBox8);
             Controls.Add(textBox7);
             Controls.Add(label19);
             Controls.Add(textBox6);
@@ -479,7 +491,7 @@
             Controls.Add(fluidTypeComboBox);
             Controls.Add(groupBox1);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Программа расчетов гидродинамики";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown11).EndInit();
@@ -539,5 +551,6 @@
         private NumericUpDown numericUpDown4;
         private Label label19;
         private TextBox textBox7;
+        private TextBox textBox8;
     }
 }

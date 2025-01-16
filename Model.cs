@@ -23,11 +23,12 @@ namespace DiplomaWinForms1
             public int Valve {  get; set; }//Количество вентилей
             public int Turn {  get; set; }//Количество поворотов на 90°
             public int CheckValue { get; set; }//Количество обратных клапанов
-            public double Pk { get; set; } //Давление в приемной емкости
+            public double Pk { get; set; } //Давление в конечной точки сети 
             public double Po {  get; set; }//Давление на свободной поверхности питающей емкости 
             public double H {  get; set; }//Высота подъема жидкости (м)
             public double FluidDensity { get; set; }//Плотность жидкости (кг/м³)
             public double FluidViscosity { get; set; }//Вязкость жидкости (Па·с)
+            
         }
 
         public class CalcResult
@@ -39,12 +40,9 @@ namespace DiplomaWinForms1
             public double LocalLoss { get; set; }//Местные потери давления (Па)
             public double RequiredInstallationPressure { get; set; }//Необходимое давление на входе (Па)
             public string Parameter { get; set; }// Характер потока (например, ламинарный, турбулентный)   
+            public double NaporStaic { get; set; }//статический наопр
+            public double Required_Pressure { get; set; }
         }
-
-        //public class SQLData 
-        //{
-        //    public string Name { get; set; }
-        //}
 
         public interface ICalculationService
         {
@@ -71,6 +69,9 @@ namespace DiplomaWinForms1
                 double Required_Pressure = Calc_Required_Pressure(input.Po, input.Pk, input.H, input.FluidDensity);
                 double cal_R_P = Required_Pressure + local_loss + lossOfPressure;
 
+
+                double staticNapor = (local_loss + lossOfPressure) / Math.Pow(input.V, 2);
+
                 return new CalcResult
                 {
                     SpeedValue = calcSpeed,
@@ -79,7 +80,9 @@ namespace DiplomaWinForms1
                     Lambda = secondHalf_lossOfPressure(Re, input.D),
                     LostOfPressure = lossOfPressure * input.FluidDensity * 9.81f,
                     LocalLoss = local_loss,
-                    RequiredInstallationPressure = cal_R_P
+                    Required_Pressure = Required_Pressure,
+                    RequiredInstallationPressure = cal_R_P,
+                    NaporStaic = staticNapor
                 };
 
 
@@ -161,6 +164,9 @@ namespace DiplomaWinForms1
                     double res = h + (pk - po) / (Ro * g);
                     return res;
                 }
+
+
+
             }
         }
 
@@ -174,16 +180,26 @@ namespace DiplomaWinForms1
         {
             public double GetDensity(string fluidType)
             {
-                Fluid fluid = GetFluid(fluidType);
-                fluid.UpdatePT(Pressure.FromBars(10), Temperature.FromDegreesCelsius(100)); // Стандартные условия
+                if(fluidType == "Нефть")
+                {
+                    return GetOilDensity();
+                }
+
+                Fluid fluid = GetFluid(fluidType);               
+                fluid.UpdatePT(Pressure.FromBars(1), Temperature.FromDegreesCelsius(20)); // Стандартные условия
                 return fluid.Density.As(DensityUnit.KilogramPerCubicMeter);
             }
 
             public double GetViscosity(string fluidType)
             {
-                Fluid fluid = GetFluid(fluidType);
-                fluid.UpdatePT(Pressure.FromBars(10), Temperature.FromDegreesCelsius(100)); // Стандартные условия
-                return fluid.DynamicViscosity.Value;
+                if (fluidType == "Нефть")
+                {
+                    return GetOilViscosity();
+                }
+
+                Fluid fluid = GetFluid(fluidType);               
+                fluid.UpdatePT(Pressure.FromBars(1), Temperature.FromDegreesCelsius(20)); // Стандартные условия
+                return fluid.DynamicViscosity.PascalSecond;
             }
 
             private Fluid GetFluid(string fluidType)
@@ -194,19 +210,38 @@ namespace DiplomaWinForms1
                 {
                     case "Вода":
                         fluid = new Fluid(FluidList.Water);
+                        break; 
+                    case "Глицерин (50%)":
+                        fluid = new Fluid(FluidList.MixGlycerolAQ); 
                         break;
-                    case "Углеводороды":
-                        fluid = new Fluid(FluidList.Methane); // Пример углеводорода
-                        break;
-                    case "Спирты":
-                        fluid = new Fluid(FluidList.Ethanol); // Пример спирта
-                        break;
+                    case "Метиловый спирт":
+                        fluid = new Fluid(FluidList.Methanol); break;
+                    case "Этиловый спирт":
+                        fluid = new Fluid(FluidList.Ethanol); break;
+                    case "Ацетон":
+                        fluid = new Fluid(FluidList.Acetone); break;
+                    case "Толуол":
+                        fluid = new Fluid(FluidList.Toluene); break;
+                    case "Нефть":    
                     default:
                         throw new ArgumentException("Неизвестный тип жидкости");
                 }
 
                 return fluid;
             }
+
+            private double GetOilDensity()
+            {
+                return 850;
+            }
+
+            private double GetOilViscosity()
+            {
+                return 0.05;
+            }
+
+
+
         }
 
         public class DataBaseManager
@@ -267,7 +302,5 @@ namespace DiplomaWinForms1
                 }
             }
         }
-
-        
     }
 }
