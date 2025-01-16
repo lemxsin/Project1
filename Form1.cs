@@ -1,6 +1,7 @@
 using System.Data.SQLite;
 using System.DirectoryServices.ActiveDirectory;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using Microsoft.Data.Sqlite;
 using static DiplomaWinForms1.Model;
 
@@ -12,12 +13,12 @@ namespace DiplomaWinForms1
 
         private readonly DataBaseManager _dbManager;
         private string _databasePath = @"C:\sqlite\results.db";
-       
+
 
         public Form1()
         {
             InitializeComponent();
-            
+
             if (!File.Exists(_databasePath))
             {
                 // Если файл не существует, создаем новый
@@ -27,6 +28,8 @@ namespace DiplomaWinForms1
             var calculationService = new CalucationService();
             var fluidService = new FluidService();
             _controller = new Controller(calculationService, fluidService);
+
+            //InitalizeChart();
         }
 
         ////////////////////////////////////////////////////////////////
@@ -49,6 +52,18 @@ namespace DiplomaWinForms1
         {
 
         }
+
+        //void InitalizeChart()
+        //{
+        //    chart1.Series.Clear();
+        //    chart1.ChartAreas.Clear();
+        //    chart1.ChartAreas.Add(new ChartArea("MainArea"));
+
+        //    chart1.Series.Add(new Series("Сеть")
+        //    {
+        //        ChartType = SeriesChartType.Line
+        //    });
+        //}
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -80,7 +95,6 @@ namespace DiplomaWinForms1
                     Pk = (double)(numericUpDown9.Value),
                     Po = (double)(numericUpDown10.Value),
                     H = (double)(numericUpDown11.Value),
-
                 };
 
                 var result = _controller.Calculate(input);
@@ -92,7 +106,8 @@ namespace DiplomaWinForms1
                     LostOfPressure = result.LostOfPressure,
                     LocalLoss = result.LocalLoss,
                     RequiredInstallationPressure = result.RequiredInstallationPressure,
-                    Parameter = result.Parameter
+                    Parameter = result.Parameter,
+                    NaporStaic = result.NaporStaic
                 });
 
                 textBox1.Text = result.SpeedValue.ToString();
@@ -102,15 +117,99 @@ namespace DiplomaWinForms1
                 textBox5.Text = result.LocalLoss.ToString();
                 textBox6.Text = result.RequiredInstallationPressure.ToString();
                 textBox7.Text = result.Parameter;
+                textBox8.Text = result.NaporStaic.ToString();
 
-                //var matchingEntries = _controller.GetMatchingEntries(result.ResultValue, 0.01);
-                //dataGridView.DataSource = matchingEntries.ToList();
+                
+
+
+                //double xMin = 0;
+                //double xMax = input.V * 1.2;
+                //double step = 0.0001;
+                //double y = 0;
+
+                //var series = chart1.Series["Сеть"];
+                //series.Points.Clear();
+               
+                //for (double x = xMin; x <= xMax; x += step)
+                //{
+                    
+                //    y = result.Required_Pressure + (result.NaporStaic * Math.Pow(x, 2));
+                //    series.Points.AddXY(x, y);
+
+                    
+
+                //}
+
+                //// Настраиваем оси
+                //chart1.ChartAreas["MainArea"].AxisX.Title = "Q";
+                //chart1.ChartAreas["MainArea"].AxisY.Title = "H";
+                //chart1.ChartAreas["MainArea"].AxisX.Minimum = double.NaN; // Автоматическое масштабирование
+                //chart1.ChartAreas["MainArea"].AxisX.Maximum = double.NaN; // Автоматическое масштабирование
+                //chart1.ChartAreas["MainArea"].AxisY.Minimum = double.NaN; // Автоматическое масштабирование
+                //chart1.ChartAreas["MainArea"].AxisY.Maximum = double.NaN;
+
+                //AddApproximationLine(xData, yData);
+
+
+
+                MessageBox.Show("Расчеты произведены успешно!");
+                Form2 form2 = new Form2(result.Required_Pressure, result.NaporStaic, input.V);
+                
+                
+                form2.ShowDialog();
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка: {ex.Message}");
             }
         }
-        
+
+        //private void AddApproximationLine(List<double> xData, List<double> yData)
+        //{
+        //    if (chart1.Series.IndexOf("Approximation") != -1)
+        //    {
+        //        chart1.Series.Remove(chart1.Series["Approximation"]);
+        //    }
+        //    (double slope, double intercept) = LinearRegression(xData, yData);
+
+        //    // Создаем новую серию для аппроксимированной линии
+        //    var approxSeries = new Series("Approximation")
+        //    {
+        //        ChartType = SeriesChartType.Line,
+        //        Color = System.Drawing.Color.Red
+        //    };
+            
+
+        //    double xMin = xData[0];
+        //    double xMax = xData[xData.Count - 1];
+
+        //    approxSeries.Points.AddXY(xMin, slope * xMin + intercept);
+        //    approxSeries.Points.AddXY(xMax, slope * xMax + intercept);
+
+        //    chart1.Series.Add(approxSeries);
+        //}
+
+        //private (double, double) LinearRegression(List<double> xData, List<double> yData)
+        //{
+        //    if (xData.Count != yData.Count || xData.Count == 0)
+        //        throw new ArgumentException("Списки данных должны быть ненулевой длины и одинакового размера.");
+
+        //    int n = xData.Count;
+        //    double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+
+        //    for (int i = 0; i < n; i++)
+        //    {
+        //        sumX += xData[i];
+        //        sumY += yData[i];
+        //        sumXY += xData[i] * yData[i];
+        //        sumX2 += xData[i] * xData[i];
+        //    }
+
+        //    double slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        //    double intercept = (sumY - slope * sumX) / n;
+
+        //    return (slope, intercept);
+        //}
     }
 }
